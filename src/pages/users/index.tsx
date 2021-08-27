@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Table, Space, Modal } from 'antd';
+import { Table, Space, Popconfirm, message } from 'antd';
 import { connect } from 'umi';
 import UserModel from './components/UserModel';
 
-function Users({ users }) {
+function Users({ users, dispatch }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [record, setRecord] = useState(undefined);
 
@@ -29,11 +29,31 @@ function Users({ users }) {
       render: (text, record) => (
         <Space size="middle">
           <a onClick={() => editHandler(record)}>Edit</a>&nbsp;&nbsp;
-          <a>Delete</a>
+          <Popconfirm
+            title="Are you sure to delete this task?"
+            onConfirm={() => confirm(record)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <a>Delete</a>&nbsp;&nbsp;
+          </Popconfirm>
         </Space>
       ),
     },
   ];
+
+  const confirm = (record) => {
+    const id = record.id;
+    dispatch({
+      type: 'users/delete',
+      id,
+    });
+  };
+
+  const cancel = () => {
+    message.error('Click on No');
+  };
 
   const editHandler = (record) => {
     setModalVisible(true);
@@ -44,13 +64,22 @@ function Users({ users }) {
     setModalVisible(false);
   };
 
+  const onFinish = (values) => {
+    const id = record.id;
+    dispatch({
+      type: 'users/edit',
+      payload: { id, values },
+    });
+  };
+
   return (
     <div className="list-table">
-      <Table columns={columns} dataSource={users.data} />
+      <Table columns={columns} dataSource={users.data} rowKey="id" />
       <UserModel
         visible={modalVisible}
         closeHandler={closeHandler}
         record={record}
+        onFinish={onFinish}
       />
     </div>
   );
