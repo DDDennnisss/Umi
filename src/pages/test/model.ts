@@ -7,7 +7,7 @@ import {
 } from './service';
 
 interface UserModelType {
-  namespace: 'users';
+  namespace: 'test';
   state: {};
   reducers: {
     getList: Reducer;
@@ -21,7 +21,7 @@ interface UserModelType {
 }
 
 const UserModel: UserModelType = {
-  namespace: 'users',
+  namespace: 'test',
   state: {},
   reducers: {
     getList(state, action) {
@@ -63,7 +63,7 @@ const UserModel: UserModelType = {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen((location) => {
-        if (location.pathname === '/users' || '/test') {
+        if (location.pathname === '/users') {
           dispatch({
             type: 'getRemote',
           });
